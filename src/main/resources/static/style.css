@@ -1,0 +1,36 @@
+.center-div {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 40%;
+  border-radius: 3px;
+  text-align: center;
+}
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 10px;
+}
+.main-link {
+  font-size: 20pt;
+  font-weight: bold;
+}
+body {
+  font-family: Helvetica;
+}
+h1 {
+  font-family: Helvetica;
+}
+p {
+  font-family: Helvetica;
+}
+a {
+  color:inherit;
+}
