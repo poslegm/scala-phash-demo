@@ -1,11 +1,10 @@
-package com.github.poslegm.scalaphashdemo
+package scalaphashdemo
 
 import java.util.concurrent.Executors
 
 import cats.effect.{ExitCode, IO, IOApp}
-import cats.syntax.functor._
-import org.http4s.dsl.io.http4sKleisliResponseSyntax
 import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.dsl.io.http4sKleisliResponseSyntax
 
 import scala.concurrent.ExecutionContext
 
@@ -20,5 +19,5 @@ object PHashServer extends IOApp {
       .serve
       .compile
       .drain
-      .as(ExitCode.Success)
+      .map(_ => ExitCode.Success)
 }

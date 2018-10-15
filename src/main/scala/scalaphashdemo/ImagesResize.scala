@@ -1,5 +1,4 @@
-package com.github.poslegm.scalaphashdemo
-
+package scalaphashdemo
 import java.awt.image.BufferedImage
 
 object ImagesResize {

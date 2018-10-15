@@ -1,12 +1,10 @@
-package com.github.poslegm.scalaphashdemo
+package scalaphashdemo
 
 import java.awt.image.BufferedImage
 
 import cats.Parallel
 import cats.effect.Sync
-import cats.syntax.either._
-import cats.syntax.monadError._
-import cats.syntax.parallel._
+import cats.syntax.all._
 import com.github.poslegm.scalaphash.PHash
 import com.github.poslegm.scalaphash.PHash.{DCTHash, MarrHash, RadialHash}
 

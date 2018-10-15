@@ -1,4 +1,4 @@
-package com.github.poslegm.scalaphashdemo
+package scalaphashdemo
 
 import java.awt.image.BufferedImage
 import java.io.File
@@ -7,9 +7,6 @@ import cats.Parallel
 import cats.effect.{ConcurrentEffect, ContextShift}
 import cats.instances.list._
 import cats.syntax.all._
-import com.github.poslegm.scalaphashdemo.ImagesComparison.computeHashes
-import com.github.poslegm.scalaphashdemo.ImagesResize.reduceImage
-import com.github.poslegm.scalaphashdemo.PHashService.InvalidImagesException
 import fs2.io.toInputStream
 import javax.imageio.ImageIO
 import org.http4s.dsl.Http4sDsl
@@ -18,6 +15,9 @@ import org.http4s.multipart.{Multipart, Part}
 import org.http4s.twirl._
 import org.http4s.{HttpRoutes, MediaType, StaticFile}
 import org.log4s.{getLogger, Logger}
+import scalaphashdemo.ImagesComparison.computeHashes
+import scalaphashdemo.ImagesResize.reduceImage
+import scalaphashdemo.PHashService.InvalidImagesException
 
 import scala.concurrent.ExecutionContext
 
