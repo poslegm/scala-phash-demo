@@ -1,5 +1,18 @@
 @(result: scalaphashdemo.ImagesComparison.ImagesComparisonResult)
-<div style="margin-bottom: 10px">RESULT</div>
-<div style="margin-bottom: 10px">RADIAL: @result.radialDistance</div>
-<div style="margin-bottom: 10px">MARR: @result.marrDistance</div>
-<div style="margin-bottom: 10px">DCT: @result.dctDistance</div>
+<div style="margin-bottom: 6px;">
+    <table style="margin-left: auto; margin-right: auto;">
+        <tr>
+            <td>RADIAL</td>
+            <td style="font-weight: bold;">@("%.5f".format(result.radialDistance))</td>
+        </tr>
+        <tr>
+            <td>MARR</td>
+            <td style="font-weight: bold;">@("%.5f".format(result.marrDistance))</td>
+        </tr>
+        <tr>
+            <td>DCT</td>
+            <td style="font-weight: bold;">@result.dctDistance</td>
+        </tr>
+    </table>
+</div>
+<div>Images looks @if(result.similar){<b>similar</b>}else{<b>not similar</b>}. Incorrect? Contributions are welcome!</div>

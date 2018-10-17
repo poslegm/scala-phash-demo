@@ -2,12 +2,13 @@ package scalaphashdemo
 import java.awt.image.BufferedImage
 
 object ImagesResize {
+  private val maxSize = Config.config.maxImageSize
   // unsafe, can flush origin image!
   def reduceImage(img: BufferedImage): BufferedImage =
-    if (img.getWidth >= img.getHeight && img.getWidth > 1024) {
-      resize(img, 1024, img.getHeight * 1024 / img.getWidth)
-    } else if (img.getHeight >= img.getWidth && img.getHeight > 1024) {
-      resize(img, img.getWidth * 1024 / img.getHeight, 1024)
+    if (img.getWidth >= img.getHeight && img.getWidth > maxSize) {
+      resize(img, maxSize, img.getHeight * maxSize / img.getWidth)
+    } else if (img.getHeight >= img.getWidth && img.getHeight > maxSize) {
+      resize(img, img.getWidth * maxSize / img.getHeight, maxSize)
     } else {
       img
     }

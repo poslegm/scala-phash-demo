@@ -19,8 +19,11 @@
   padding-bottom: 10px;
 }
 .main-link {
-  font-size: 20pt;
+  font-size: 24pt;
   font-weight: bold;
+}
+.small-link {
+  font-size: 10pt;
 }
 body {
   font-family: Helvetica;
@@ -33,4 +36,7 @@ p {
 }
 a {
   color:inherit;
+}
+td {
+  text-align:left;
 }

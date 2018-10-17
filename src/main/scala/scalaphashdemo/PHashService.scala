@@ -25,9 +25,6 @@ object PHashService {
   case object InvalidImagesException extends Throwable
 }
 
-// TODO ссылка на либу
-// TODO ссылка на исходники демо
-// TODO пометка в сообщении об ошибке, что это может быть баг либы
 class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionContext)(
   implicit E: ConcurrentEffect[F],
   cs: ContextShift[F],
@@ -46,27 +43,20 @@ class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionC
       request.decode[Multipart[F]] { multipart =>
         val eff = for {
           (originImage1, originImage2) <- deserializeImages(multipart)
-          s1 <- E.delay(System.currentTimeMillis())
           (image1, image2) <- reduceImages(originImage1, originImage2)
-          _ <- E.delay(logger.debug(s"reduced in ${System.currentTimeMillis() - s1}"))
-          _ <- E.delay {
-            ImageIO.write(image1, "jpg", new File("example1.jpg"))
-            ImageIO.write(image2, "jpg", new File("example2.jpg"))
-          }
           s <- E.delay(System.currentTimeMillis())
-          _ <- E.delay(logger.debug(s"hashes started..."))
           result <- cs.evalOn(computationEC)(computeHashes(image1, image2))
-          _ <- E.delay(logger.debug(s"result: $result, ${System.currentTimeMillis() - s}"))
+          _ <- E.delay(logger.debug(s"hashes computed in ${System.currentTimeMillis() - s}"))
           html <- Ok(html.index(html.resultblock(result)))
         } yield html
 
         eff.handleErrorWith {
           case InvalidImagesException =>
             logger.error("invalid images")
-            Ok(html.index(html.errorblock("invalid images (supported JPEG only)")))
+            Ok(html.index(html.errorblock("Invalid images (supported JPEG only)")))
           case error =>
             logger.error(error)("failed to compute hashes")
-            val frontendMsg = "failed to compute hashes (may be bug in scala-phash or scala-phash demo)"
+            val frontendMsg = "Failed to compute hashes (may be bug in scala-phash or scala-phash demo)"
             Ok(html.index(html.errorblock(frontendMsg)))
         }
       }

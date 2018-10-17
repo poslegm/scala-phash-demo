@@ -9,19 +9,19 @@ import com.github.poslegm.scalaphash.PHash
 import com.github.poslegm.scalaphash.PHash.{DCTHash, MarrHash, RadialHash}
 
 object ImagesComparison {
-  case class ImagesComparisonResult(dctDistance: Long, marrDistance: Double, radialDistance: Double)
+  case class ImagesComparisonResult(dctDistance: Long, marrDistance: Double, radialDistance: Double, similar: Boolean)
 
   def computeHashes[F[_], G[_]](
     image1: BufferedImage,
     image2: BufferedImage
   )(implicit S: Sync[F], P: Parallel[F, G]): F[ImagesComparisonResult] =
     (
-      S.delay { println("d1"); PHash.dctHash(image1) }.rethrow,
-      S.delay { println("m1"); PHash.marrHash(image1) }.rethrow,
-      S.delay { println("r1"); PHash.radialHash(image1) }.rethrow,
-      S.delay { println("d2"); PHash.dctHash(image2) }.rethrow,
-      S.delay { println("m2"); PHash.marrHash(image2) }.rethrow,
-      S.delay { println("r2"); PHash.radialHash(image2) }.rethrow
+      S.delay(PHash.dctHash(image1)).rethrow,
+      S.delay(PHash.marrHash(image1)).rethrow,
+      S.delay(PHash.radialHash(image1)).rethrow,
+      S.delay(PHash.dctHash(image2)).rethrow,
+      S.delay(PHash.marrHash(image2)).rethrow,
+      S.delay(PHash.radialHash(image2)).rethrow
     ).parMapN(compareHashes).rethrow
 
   private def compareHashes(
@@ -45,7 +45,18 @@ object ImagesComparison {
       )
       dctCompare = PHash.dctHashDistance(image1Dct, image2Dct)
     } yield {
-      println(image1Dct, image2Dct)
-      ImagesComparisonResult(dctCompare, marrCompare, radialCompare)
+      ImagesComparisonResult(
+        dctCompare,
+        marrCompare,
+        radialCompare,
+        predictSimilarity(dctCompare, marrCompare, radialCompare)
+      )
     }
+
+  private def predictSimilarity(dctDistance: Long, marrDistance: Double, radialDistance: Double): Boolean =
+    List(
+      dctDistance < Config.config.dctThreshold,
+      marrDistance < Config.config.marrThreshold,
+      radialDistance > Config.config.radialThreshold
+    ).count(identity) > 2
 }
