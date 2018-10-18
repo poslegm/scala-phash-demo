@@ -1,7 +1,6 @@
 package scalaphashdemo
 
 import java.awt.image.BufferedImage
-import java.io.File
 
 import cats.Parallel
 import cats.effect.{ConcurrentEffect, ContextShift}
@@ -33,13 +32,13 @@ class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionC
   private val logger: Logger = getLogger
 
   val routes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case GET -> Root =>
+    case GET -> Root / "scala-phash-demo" =>
       Ok(html.index(html.inputform()))
 
-    case request @ GET -> Root / "style.css" =>
-      StaticFile.fromFile(new File("src/main/resources/static/style.css"), ioEC, Some(request)).getOrElseF(NotFound())
+    case request @ GET -> Root / "scala-phash-demo" / "style.css" =>
+      StaticFile.fromResource("/static/style.css", ioEC, Some(request)).getOrElseF(NotFound())
 
-    case request @ POST -> Root / "submit-images" =>
+    case request @ POST -> Root / "scala-phash-demo" / "submit-images" =>
       request.decode[Multipart[F]] { multipart =>
         val eff = for {
           (originImage1, originImage2) <- deserializeImages(multipart)
