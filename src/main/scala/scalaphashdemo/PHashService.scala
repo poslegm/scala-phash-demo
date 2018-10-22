@@ -67,7 +67,7 @@ class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionC
       .traverse(parseRequestPart)
       .flatMap {
         case image1 :: image2 :: Nil => E.pure(image1 -> image2)
-        case _ => E.raiseError[(BufferedImage, BufferedImage)](InvalidImagesException)
+        case _ => E.raiseError(InvalidImagesException)
       }
 
   private def parseRequestPart(part: Part[F]): F[BufferedImage] =
