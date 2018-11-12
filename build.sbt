@@ -1,6 +1,6 @@
 val Http4sVersion = "0.19.0"
 val LogbackVersion = "1.2.3"
-val scalaPhashVersion = "1.1.0"
+val scalaPhashVersion = "1.2.0"
 val fs2Version = "1.0.0"
 val PureConfigVersion = "0.9.2"
 
@@ -11,7 +11,6 @@ lazy val root = (project in file("."))
     name := "scalaphashdemo",
     version := "0.0.1",
     scalaVersion := "2.12.7",
-    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     scalafmtOnCompile := true,
     scalacOptions ++= Seq(
       "-unchecked",

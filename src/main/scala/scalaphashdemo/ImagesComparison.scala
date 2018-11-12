@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage
 import cats.Parallel
 import cats.effect.Sync
 import cats.syntax.all._
-import com.github.poslegm.scalaphash.PHash
-import com.github.poslegm.scalaphash.PHash.{DCTHash, MarrHash, RadialHash}
+import scalaphash.PHash
+import scalaphash.PHash.{DCTHash, MarrHash, RadialHash}
 
 object ImagesComparison {
   case class ImagesComparisonResult(dctDistance: Long, marrDistance: Double, radialDistance: Double, similar: Boolean)
