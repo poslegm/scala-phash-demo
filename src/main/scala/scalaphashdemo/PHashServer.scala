@@ -16,7 +16,7 @@ object PHashServer extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     IO(Config.config) *> BlazeServerBuilder[IO]
       .bindHttp(8080, "localhost")
-      .withHttpApp(new PHashService[IO, IO.Par](ioEC, computationEC).routes.orNotFound)
+      .withHttpApp(new PHashService[IO](ioEC, computationEC).routes.orNotFound)
       .serve
       .compile
       .drain

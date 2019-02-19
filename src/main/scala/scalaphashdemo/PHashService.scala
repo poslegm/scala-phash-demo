@@ -6,6 +6,7 @@ import cats.Parallel
 import cats.effect.{ConcurrentEffect, ContextShift}
 import cats.instances.list._
 import cats.syntax.all._
+import cats.temp.par._
 import fs2.io.toInputStream
 import javax.imageio.ImageIO
 import org.http4s.dsl.Http4sDsl
@@ -24,10 +25,9 @@ object PHashService {
   case object InvalidImagesException extends Throwable
 }
 
-class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionContext)(
-  implicit E: ConcurrentEffect[F],
-  cs: ContextShift[F],
-  P: Parallel[F, G]
+class PHashService[F[_]: Par](ioEC: ExecutionContext, computationEC: ExecutionContext)(
+  implicit F: ConcurrentEffect[F],
+  cs: ContextShift[F]
 ) extends Http4sDsl[F] {
   private val logger: Logger = getLogger
 
@@ -43,9 +43,9 @@ class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionC
         val eff = for {
           (originImage1, originImage2) <- deserializeImages(multipart)
           (image1, image2) <- reduceImages(originImage1, originImage2)
-          s <- E.delay(System.currentTimeMillis())
+          s <- F.delay(System.currentTimeMillis())
           result <- cs.evalOn(computationEC)(computeHashes(image1, image2))
-          _ <- E.delay(logger.debug(s"hashes computed in ${System.currentTimeMillis() - s}"))
+          _ <- F.delay(logger.debug(s"hashes computed in ${System.currentTimeMillis() - s}"))
           html <- Ok(html.index(html.resultblock(result)))
         } yield html
 
@@ -66,18 +66,18 @@ class PHashService[F[_], G[_]](ioEC: ExecutionContext, computationEC: ExecutionC
       .filter(_.headers.exists(_ == `Content-Type`(MediaType.image.jpeg)))
       .traverse(parseRequestPart)
       .flatMap {
-        case image1 :: image2 :: Nil => E.pure(image1 -> image2)
-        case _ => E.raiseError(InvalidImagesException)
+        case image1 :: image2 :: Nil => F.pure(image1 -> image2)
+        case _ => F.raiseError(InvalidImagesException)
       }
 
   private def parseRequestPart(part: Part[F]): F[BufferedImage] =
     part.body
       .through(toInputStream)
-      .evalMap(imageBytesStream => cs.evalOn(ioEC)(E.delay(ImageIO.read(imageBytesStream))))
+      .evalMap(imageBytesStream => cs.evalOn(ioEC)(F.delay(ImageIO.read(imageBytesStream))))
       .compile
       .toList
       .map(_.head)
 
   private def reduceImages(img1: BufferedImage, img2: BufferedImage): F[(BufferedImage, BufferedImage)] =
-    (E.delay(reduceImage(img1)), E.delay(reduceImage(img2))).parMapN((a, b) => a -> b)
+    (F.delay(reduceImage(img1)), F.delay(reduceImage(img2))).parMapN((a, b) => a -> b)
 }

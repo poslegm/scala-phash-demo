@@ -5,23 +5,23 @@ import java.awt.image.BufferedImage
 import cats.Parallel
 import cats.effect.Sync
 import cats.syntax.all._
+import cats.temp.par._
 import scalaphash.PHash
 import scalaphash.PHash.{DCTHash, MarrHash, RadialHash}
 
 object ImagesComparison {
   case class ImagesComparisonResult(dctDistance: Long, marrDistance: Double, radialDistance: Double, similar: Boolean)
 
-  def computeHashes[F[_], G[_]](
-    image1: BufferedImage,
-    image2: BufferedImage
-  )(implicit S: Sync[F], P: Parallel[F, G]): F[ImagesComparisonResult] =
+  def computeHashes[F[_]: Par](image1: BufferedImage, image2: BufferedImage)(
+    implicit F: Sync[F]
+  ): F[ImagesComparisonResult] =
     (
-      S.delay(PHash.dctHash(image1)).rethrow,
-      S.delay(PHash.marrHash(image1)).rethrow,
-      S.delay(PHash.radialHash(image1)).rethrow,
-      S.delay(PHash.dctHash(image2)).rethrow,
-      S.delay(PHash.marrHash(image2)).rethrow,
-      S.delay(PHash.radialHash(image2)).rethrow
+      F.delay(PHash.dctHash(image1)).rethrow,
+      F.delay(PHash.marrHash(image1)).rethrow,
+      F.delay(PHash.radialHash(image1)).rethrow,
+      F.delay(PHash.dctHash(image2)).rethrow,
+      F.delay(PHash.marrHash(image2)).rethrow,
+      F.delay(PHash.radialHash(image2)).rethrow
     ).parMapN(compareHashes).rethrow
 
   private def compareHashes(
