@@ -1,6 +1,6 @@
 val Http4sVersion = "0.19.0"
 val LogbackVersion = "1.2.3"
-val scalaPhashVersion = "1.2.0"
+val scalaPhashVersion = "1.2.1"
 val fs2Version = "1.0.3"
 val PureConfigVersion = "0.10.2"
 
